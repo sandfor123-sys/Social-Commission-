@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Background with warm glow -->
+  <rect width="512" height="512" rx="112" fill="#0d0b0a" />
+  
+  <!-- Subtle circular radiant gold gradient -->
+  <defs>
+    <radialGradient id="gold-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="256" cy="256" r="200" fill="url(#gold-glow)" />
+
+  <!-- Outer Ring -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#f59e0b" stroke-width="4" stroke-opacity="0.2" stroke-dasharray="10, 15" />
+
+  <!-- Integrated Heart and Cake Symbol -->
+  <g transform="translate(128, 128) scale(1.0)">
+    <!-- Elegant heart background silhouette -->
+    <path d="M128 232C128 232 28 152 28 88C28 44 64 8 108 8C134.4 8 152 24 164 40C176 24 193.6 8 220 8C264 8 300 44 300 88C300 152 200 232 128 232Z" 
+          fill="none" 
+          stroke="url(#gold-grad)" 
+          stroke-width="12" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+
+    <!-- Cake silhouette centered inside heart -->
+    <!-- Base tier -->
+    <rect x="78" y="145" width="100" height="40" rx="8" fill="url(#gold-grad)" />
+    <!-- Candle -->
+    <rect x="123" y="115" width="10" height="30" rx="2" fill="#fbbf24" />
+    <!-- Flame with glowing aura -->
+    <path d="M128 92 C134 102, 122 112, 128 115 C134 112, 122 102, 128 92 Z" fill="#f59e0b" />
+  </g>
+</svg>

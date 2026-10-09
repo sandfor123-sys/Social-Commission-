@@ -1,0 +1,24 @@
+{
+  "name": "Social Commission",
+  "short_name": "Social Comm",
+  "description": "Accompagner sa communauté avec attention et bienveillance - Anniversaires & Accompagnements",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0b0a",
+  "theme_color": "#f59e0b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

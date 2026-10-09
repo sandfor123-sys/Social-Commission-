@@ -1,0 +1,6 @@
+{
+  "name": "Social Commission",
+  "description": "Gérez les membres de votre communauté, suivez leurs anniversaires et accédez à des ressources pour ne rater aucune attention.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
