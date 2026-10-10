@@ -6,7 +6,6 @@ import MemberSection from './components/MemberSection';
 import ResourceSection from './components/ResourceSection';
 import SettingsSection from './components/SettingsSection';
 import { 
-  Heart, 
   Cake, 
   Users, 
   BookOpen, 
@@ -14,9 +13,9 @@ import {
   Sparkles,
   Bell,
   BellOff,
-  Volume2
+  Volume2,
+  Music
 } from 'lucide-react';
-import { motion } from 'motion/react';
 import { 
   isBirthdayToday, 
   playWarmChime, 
@@ -45,7 +44,6 @@ export default function App() {
     if (savedMembers) {
       setMembers(JSON.parse(savedMembers));
     } else {
-      // START FRESH - No more preloaded mock data!
       setMembers([]);
     }
     
@@ -67,17 +65,15 @@ export default function App() {
     if (isInitialized && members.length > 0) {
       const todayBirthdays = members.filter(m => isBirthdayToday(m.birthDate));
       if (todayBirthdays.length > 0) {
-        // Play the premium warm chime sound safely
         setTimeout(() => {
           playWarmChime();
-        }, 1200);
+        }, 800);
 
-        // Send a separate desktop notification for each member having a birthday
         todayBirthdays.forEach(m => {
           const age = calculateAge(m.birthDate);
           triggerDesktopNotification(
-            `🎂 C'est l'anniversaire de ${m.firstName} !`,
-            `Aujourd'hui, ${m.firstName} ${m.lastName} (${m.role}) fête ses ${age} ans.`
+            `🎂 Anniversaire : ${m.firstName} (${m.role})`,
+            `C'est l'anniversaire de ${m.firstName} ${m.lastName} aujourd'hui (${age} ans).`
           );
         });
       }
@@ -140,16 +136,16 @@ export default function App() {
 
   if (!isInitialized) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0d0b0a] text-[#ebdcd3] font-sans">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-800 font-sans">
         <div className="text-center space-y-3">
-          <Heart className="w-10 h-10 text-amber-500 animate-pulse mx-auto fill-amber-500/20" />
-          <p className="text-sm font-semibold text-amber-100/70 tracking-wide">Chargement de votre espace chaleureux...</p>
+          <Music className="w-8 h-8 text-rose-500 animate-spin mx-auto" />
+          <p className="text-xs font-semibold text-slate-500">Chargement de l'espace chorale...</p>
         </div>
       </div>
     );
   }
 
-  // Onboarding setup screen with warm dark theme
+  // Setup screen if no org configured yet
   if (!organization) {
     return <OrganizationSetup onSave={handleSaveOrganization} />;
   }
@@ -157,46 +153,43 @@ export default function App() {
   const todayBirthdaysCount = members.filter(m => isBirthdayToday(m.birthDate)).length;
 
   return (
-    <div className="min-h-screen bg-[#0d0b0a] text-[#ebdcd3] font-sans flex flex-col justify-between selection:bg-amber-500 selection:text-black">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col justify-between selection:bg-rose-500 selection:text-white">
       
-      {/* HEADER BAR WITH GLASSMORPHISM AND GOLD TOUCHES */}
-      <header className="bg-[#161311]/90 backdrop-blur-md border-b border-[#2d241f] sticky top-0 z-40 shrink-0">
+      {/* HEADER BAR */}
+      <header className="bg-white border-b border-slate-200/90 sticky top-0 z-40 shrink-0 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-18">
             
-            {/* Logo, premium typography */}
-            <div className="flex items-center gap-3.5">
-              <div className="p-3 bg-[#221c18] rounded-2xl text-amber-400 border border-amber-500/25 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.06)]">
-                <Heart className="w-5 h-5 fill-amber-400/20" />
-              </div>
+            {/* Logo & Choir Name */}
+            <div className="flex items-center gap-3">
+              <img 
+                src="/choir-logo.png" 
+                alt="Logo" 
+                className="w-11 h-11 rounded-xl object-cover border border-slate-200 shadow-xs bg-white"
+              />
               <div>
-                <h1 className="text-lg md:text-xl font-serif font-bold text-amber-50 tracking-tight flex items-center gap-2">
-                  Social Commission
+                <h1 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
+                  {organization.name}
                 </h1>
-                <p className="text-[10px] md:text-xs text-amber-200/50 font-medium italic hidden sm:block">
-                  « Accompagner sa communauté avec attention et bienveillance »
+                <p className="text-xs text-slate-500 font-medium">
+                  Gestion & Anniversaires
                 </p>
               </div>
             </div>
 
-            {/* Notification and audio indicator, role badges */}
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex flex-col items-end text-right">
-                <span className="text-xs font-bold text-amber-100/90">{organization.name}</span>
-                <span className="text-[9px] text-amber-400/70 font-bold uppercase tracking-widest">{organization.type || 'COMMUNAUTÉ'}</span>
-              </div>
-              
+            {/* Role & Audio Test */}
+            <div className="flex items-center gap-2 sm:gap-3">
               <button 
                 onClick={playWarmChime}
-                title="Tester le carillon sonore"
-                className="p-2 bg-[#221c18] border border-[#382d26] text-amber-400 rounded-xl hover:bg-[#2d241f] transition-all active:scale-95 flex items-center justify-center"
+                title="Tester la cloche d'anniversaire"
+                className="p-2 text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl transition-all active:scale-95 flex items-center justify-center"
               >
                 <Volume2 className="w-4 h-4" />
               </button>
 
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#221c18] border border-amber-500/20 text-amber-300">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 fill-amber-400/10" />
-                <span className="max-w-[120px] md:max-w-none truncate">{organization.userRole}</span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 border border-rose-200/70 text-rose-700">
+                <Sparkles className="w-3.5 h-3.5 text-rose-500" />
+                <span className="max-w-[130px] sm:max-w-none truncate">{organization.userRole}</span>
               </span>
             </div>
 
@@ -204,24 +197,24 @@ export default function App() {
         </div>
       </header>
 
-      {/* DESKTOP NOTIFICATIONS PERMISSION BANNER */}
+      {/* NOTIFICATIONS BANNER */}
       {showPermissionBanner && (
-        <div className="bg-[#221c18] border-b border-[#3d2e24] py-3.5 px-4">
+        <div className="bg-amber-50 border-b border-amber-200 py-2.5 px-4">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2.5 text-amber-200">
-              <Bell className="w-4 h-4 text-amber-400 animate-bounce" />
-              <span>Pour être prévenu instantanément des anniversaires, activez les notifications de bureau.</span>
+            <div className="flex items-center gap-2 text-amber-900">
+              <Bell className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>Activez les notifications pour être alerté automatiquement des anniversaires du jour.</span>
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowPermissionBanner(false)}
-                className="text-amber-200/60 hover:text-amber-200 font-medium transition-colors"
+                className="text-amber-700 hover:text-amber-900 font-medium transition-colors"
               >
                 Plus tard
               </button>
               <button
                 onClick={handleRequestPermission}
-                className="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-[#0d0b0a] font-bold rounded-lg transition-all active:scale-95"
+                className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-all"
               >
                 Activer
               </button>
@@ -230,29 +223,31 @@ export default function App() {
         </div>
       )}
 
-      {/* CORE LAYOUT WITH TABS */}
-      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 flex flex-col gap-8">
+      {/* MAIN CONTENT */}
+      <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 flex flex-col gap-6">
         
-        {/* Navigation Tab rail */}
-        <div className="flex overflow-x-auto bg-[#161311] border border-[#2d241f] p-1.5 rounded-2xl shadow-lg gap-1.5 scrollbar-none shrink-0">
+        {/* Navigation Tabs */}
+        <div className="flex overflow-x-auto bg-white border border-slate-200 p-1 rounded-2xl shadow-xs gap-1 scrollbar-none shrink-0">
           <button
             onClick={() => setActiveTab('birthdays')}
-            className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
               activeTab === 'birthdays'
-                ? 'bg-amber-500 text-[#0d0b0a] shadow-md font-bold'
-                : 'text-amber-200/70 hover:text-amber-100 hover:bg-[#221c18]'
+                ? 'bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             <Cake className="w-4 h-4 shrink-0" />
             <span>Anniversaires</span>
             {todayBirthdaysCount > 0 ? (
-              <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-600 text-white animate-pulse">
+              <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-white text-rose-600 shadow-xs animate-bounce">
                 {todayBirthdaysCount}
               </span>
             ) : (
               members.length > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 rounded bg-[#2c241f] text-amber-200/50 text-[10px]">
-                  {members.filter(m => isBirthdayToday(m.birthDate)).length}
+                <span className={`ml-1 px-1.5 py-0.2 rounded text-[10px] ${
+                  activeTab === 'birthdays' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                }`}>
+                  0
                 </span>
               )
             )}
@@ -260,16 +255,16 @@ export default function App() {
 
           <button
             onClick={() => setActiveTab('members')}
-            className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
               activeTab === 'members'
-                ? 'bg-amber-500 text-[#0d0b0a] shadow-md font-bold'
-                : 'text-amber-200/70 hover:text-amber-100 hover:bg-[#221c18]'
+                ? 'bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             <Users className="w-4 h-4 shrink-0" />
-            <span>Membres</span>
+            <span>Choristes & Pupitres</span>
             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-              activeTab === 'members' ? 'bg-[#221c18] text-amber-300' : 'bg-[#221c18] text-amber-200/60'
+              activeTab === 'members' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
             }`}>
               {members.length}
             </span>
@@ -277,22 +272,22 @@ export default function App() {
 
           <button
             onClick={() => setActiveTab('resources')}
-            className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
               activeTab === 'resources'
-                ? 'bg-amber-500 text-[#0d0b0a] shadow-md font-bold'
-                : 'text-amber-200/70 hover:text-amber-100 hover:bg-[#221c18]'
+                ? 'bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             <BookOpen className="w-4 h-4 shrink-0" />
-            <span>Ressources</span>
+            <span>Modèles de Messages</span>
           </button>
 
           <button
             onClick={() => setActiveTab('settings')}
-            className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ml-auto ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ml-auto ${
               activeTab === 'settings'
-                ? 'bg-amber-500 text-[#0d0b0a] shadow-md font-bold'
-                : 'text-amber-200/70 hover:text-amber-100 hover:bg-[#221c18]'
+                ? 'bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             <Settings className="w-4 h-4 shrink-0" />
@@ -300,7 +295,7 @@ export default function App() {
           </button>
         </div>
 
-        {/* ACTIVE SECTION CARRIER */}
+        {/* TAB VIEWS */}
         <div className="flex-1">
           {activeTab === 'birthdays' && (
             <BirthdaySection 
@@ -338,23 +333,26 @@ export default function App() {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-[#120f0e] border-t border-[#2d241f] py-8 text-center text-xs text-amber-200/30 shrink-0">
-        <p className="font-semibold tracking-wide">
-          Social Commission &copy; {new Date().getFullYear()} • Pour une communauté plus unie, attentive et chaleureuse.
-        </p>
-        <p className="text-[10px] text-amber-200/20 mt-1 flex items-center justify-center gap-1.5">
-          <span>Hébergement Local</span>
-          <span>•</span>
-          <span className="flex items-center gap-1">
-            {notificationPermission === 'granted' ? (
-              <><Bell className="w-3 h-3 text-emerald-500" /> Notifications actives</>
-            ) : (
-              <><BellOff className="w-3 h-3 text-amber-500/50" /> Notifications inactives</>
-            )}
-          </span>
-        </p>
+      <footer className="bg-white border-t border-slate-200 py-5 text-center text-xs text-slate-500 shrink-0">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p className="font-medium">
+            {organization.name} &copy; {new Date().getFullYear()}
+          </p>
+          <div className="flex items-center gap-2 text-[11px] text-slate-400">
+            <span>Stockage local sécurisé</span>
+            <span>•</span>
+            <span className="flex items-center gap-1">
+              {notificationPermission === 'granted' ? (
+                <><Bell className="w-3 h-3 text-emerald-600" /> Notifications activées</>
+              ) : (
+                <><BellOff className="w-3 h-3 text-slate-400" /> Notifications désactivées</>
+              )}
+            </span>
+          </div>
+        </div>
       </footer>
 
     </div>
   );
 }
+

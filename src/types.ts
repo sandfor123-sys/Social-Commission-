@@ -1,5 +1,7 @@
 export type Gender = 'M' | 'F';
 
+export type Pupitre = 'Soprano' | 'Alto' | 'Ténor' | 'Basse' | 'Direction & Musiciens' | 'Autre';
+
 export interface Member {
   id: string;
   lastName: string;
@@ -8,7 +10,8 @@ export interface Member {
   birthDate: string; // YYYY-MM-DD
   phone: string;
   email?: string;
-  role: string; // Fonction au sein de l'organisation
+  role: string; // Ex: Soprano, Alto, Ténor, Basse, Chef de chœur, Organiste, Secrétaire...
+  pupitre?: Pupitre;
 }
 
 export interface Organization {
@@ -29,3 +32,4 @@ export interface ResourceItem {
     text: string;
   }[];
 }
+

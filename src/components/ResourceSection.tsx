@@ -11,11 +11,11 @@ import {
   Flame, 
   Copy, 
   Check, 
-  Search,
-  BookOpen,
-  HelpCircle,
-  MessageSquareCode,
-  X
+  Search, 
+  BookOpen, 
+  X,
+  Music,
+  ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -47,67 +47,6 @@ export default function ResourceSection({ organization }: ResourceSectionProps) 
     }
   };
 
-  const getColorTheme = (id: string) => {
-    switch (id) {
-      case 'birthday':
-        return {
-          bg: 'bg-amber-950/10 border-amber-900/30 hover:border-amber-500/40',
-          text: 'text-amber-100',
-          subtext: 'text-amber-200/50',
-          iconBg: 'bg-amber-950/40 text-amber-400',
-          button: 'hover:bg-amber-500 hover:text-black text-amber-300 bg-[#221c18]'
-        };
-      case 'sick':
-        return {
-          bg: 'bg-rose-950/10 border-rose-900/30 hover:border-rose-500/40',
-          text: 'text-rose-100',
-          subtext: 'text-rose-200/50',
-          iconBg: 'bg-rose-950/40 text-rose-400',
-          button: 'hover:bg-rose-500 hover:text-black text-rose-300 bg-[#221c18]'
-        };
-      case 'absent':
-        return {
-          bg: 'bg-indigo-950/10 border-indigo-900/30 hover:border-indigo-500/40',
-          text: 'text-indigo-100',
-          subtext: 'text-indigo-200/50',
-          iconBg: 'bg-indigo-950/40 text-indigo-400',
-          button: 'hover:bg-indigo-500 hover:text-black text-indigo-300 bg-[#221c18]'
-        };
-      case 'birth':
-        return {
-          bg: 'bg-sky-950/10 border-sky-900/30 hover:border-sky-500/40',
-          text: 'text-sky-100',
-          subtext: 'text-sky-200/50',
-          iconBg: 'bg-sky-950/40 text-sky-400',
-          button: 'hover:bg-sky-500 hover:text-black text-sky-300 bg-[#221c18]'
-        };
-      case 'wedding':
-        return {
-          bg: 'bg-emerald-950/10 border-emerald-900/30 hover:border-emerald-500/40',
-          text: 'text-emerald-100',
-          subtext: 'text-emerald-200/50',
-          iconBg: 'bg-emerald-950/40 text-emerald-400',
-          button: 'hover:bg-emerald-500 hover:text-black text-emerald-300 bg-[#221c18]'
-        };
-      case 'bereavement':
-        return {
-          bg: 'bg-slate-900/10 border-slate-800/50 hover:border-slate-500/40',
-          text: 'text-slate-100',
-          subtext: 'text-slate-300/40',
-          iconBg: 'bg-slate-900/40 text-slate-300',
-          button: 'hover:bg-slate-500 hover:text-black text-slate-300 bg-[#221c18]'
-        };
-      default:
-        return {
-          bg: 'bg-amber-950/10 border-amber-900/30 hover:border-amber-500/40',
-          text: 'text-amber-100',
-          subtext: 'text-amber-200/50',
-          iconBg: 'bg-amber-950/40 text-amber-400',
-          button: 'hover:bg-amber-500 hover:text-black text-amber-300 bg-[#221c18]'
-        };
-    }
-  };
-
   const filteredResources = RESOURCES_DATA.filter(r => 
     r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -117,17 +56,10 @@ export default function ResourceSection({ organization }: ResourceSectionProps) 
     const sampleMember = {
       firstName: '[Prénom]',
       lastName: '[Nom]',
-      role: '[Sa Fonction]'
+      role: '[Pupitre]'
     };
-    
-    const formattedText = formatMessageTemplate(
-      text,
-      sampleMember,
-      organization.name,
-      organization.userRole
-    );
-
-    navigator.clipboard.writeText(formattedText).then(() => {
+    const interpolated = formatMessageTemplate(text, sampleMember, organization.name, organization.userRole);
+    navigator.clipboard.writeText(interpolated).then(() => {
       setCopiedTextId(id);
       setTimeout(() => setCopiedTextId(null), 2500);
     });
@@ -136,206 +68,182 @@ export default function ResourceSection({ organization }: ResourceSectionProps) 
   return (
     <div className="space-y-6">
       
-      {/* Header section */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      {/* Header and Search */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white border border-slate-200/90 p-5 rounded-2xl shadow-xs gap-4">
         <div>
-          <h2 className="text-xl font-bold text-amber-50 tracking-tight font-serif">
-            Bibliothèque d'Accompagnement
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-rose-500" />
+            <span>Guide & Modèles de Messages</span>
           </h2>
-          <p className="text-xs text-amber-200/50 mt-1">
-            Fiches pratiques et messages types conçus pour soutenir vos membres dans chaque situation de vie.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Messages types pré-remplis pour la vie de la chorale {organization.name}.
           </p>
         </div>
-        
-        <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-amber-400/50 absolute left-3 top-1/2 -translate-y-1/2" />
+
+        <div className="relative w-full sm:w-72">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Rechercher une situation..."
+            placeholder="Rechercher un modèle..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 bg-[#161311] border border-[#2d241f] rounded-xl text-sm text-amber-100 placeholder-amber-200/25 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-[#221c18]"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500"
           />
+          {searchTerm && (
+            <button 
+              onClick={() => setSearchTerm('')} 
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Grid List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filteredResources.map((resource) => {
-          const theme = getColorTheme(resource.id);
-          return (
-            <motion.div
-              key={resource.id}
-              layoutId={`card-${resource.id}`}
-              onClick={() => setSelectedResource(resource)}
-              className={`p-6 rounded-2xl border ${theme.bg} bg-[#161311] transition-all duration-300 cursor-pointer flex flex-col justify-between shadow-lg hover:shadow-[0_0_20px_rgba(245,158,11,0.04)] hover:-translate-y-0.5`}
-            >
+      {/* Grid of Resource Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredResources.map((item) => (
+          <div
+            key={item.id}
+            className="bg-white border border-slate-200/90 hover:border-slate-300 rounded-2xl p-5 shadow-xs flex flex-col justify-between transition-all"
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-2xl">{item.emoji}</span>
+                <span className="text-[11px] font-semibold text-slate-400">
+                  {item.templates.length} modèle{item.templates.length > 1 ? 's' : ''}
+                </span>
+              </div>
+
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`p-2.5 rounded-xl border border-current/10 ${theme.iconBg}`}>
-                    {getIcon(resource.icon, 'w-5 h-5')}
-                  </div>
-                  <span className="text-2xl">{resource.emoji}</span>
-                </div>
-                
-                <h3 className={`text-base font-serif font-bold ${theme.text} mb-2`}>
-                  {resource.title}
-                </h3>
-                
-                <p className="text-xs text-amber-200/60 leading-relaxed mb-6">
-                  {resource.description}
+                <h3 className="text-sm font-bold text-slate-900">{item.title}</h3>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  {item.description}
                 </p>
               </div>
 
-              <div className="pt-3.5 border-t border-[#2d241f] flex items-center justify-between text-xs font-bold text-amber-400">
-                <span>Consulter le guide</span>
-                <span className="text-lg">→</span>
+              {/* Action checklist */}
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs">
+                <span className="font-bold text-[10px] text-slate-400 uppercase tracking-wider block mb-1">Que faire :</span>
+                {item.whatToDo.slice(0, 2).map((todo, idx) => (
+                  <div key={idx} className="flex items-start gap-1.5 text-slate-600 text-[11px]">
+                    <span className="text-rose-500 font-bold">•</span>
+                    <span>{todo}</span>
+                  </div>
+                ))}
               </div>
-            </motion.div>
-          );
-        })}
+            </div>
 
-        {filteredResources.length === 0 && (
-          <div className="col-span-full py-16 text-center bg-[#161311] border border-[#2d241f] rounded-2xl">
-            <BookOpen className="w-12 h-12 text-amber-500/40 mx-auto mb-3" />
-            <p className="text-sm font-bold text-amber-50">Aucune situation trouvée</p>
-            <p className="text-xs text-amber-200/40 mt-1">Essayez un autre mot-clé.</p>
+            <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between">
+              <button
+                onClick={() => setSelectedResource(item)}
+                className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-xl transition-all active:scale-98"
+              >
+                <span>Voir les modèles de texte</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
-        )}
+        ))}
       </div>
 
-      {/* Resource Detail Modal */}
+      {/* DETAIL MODAL */}
       <AnimatePresence>
         {selectedResource && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.7 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedResource(null)}
-              className="absolute inset-0 bg-[#060505]/95"
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              transition={{ duration: 0.2 }}
-              className="relative w-full max-w-2xl bg-[#161311] rounded-2xl shadow-2xl border border-[#2d241f] overflow-hidden flex flex-col max-h-[85vh]"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden"
             >
-              {/* Modal Header */}
-              <div className="p-5 border-b border-[#2d241f] flex items-center justify-between shrink-0 bg-[#1c1815]">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2.5 rounded-xl border border-current/10 ${getColorTheme(selectedResource.id).iconBg}`}>
-                    {getIcon(selectedResource.icon, 'w-5 h-5')}
-                  </div>
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-slate-100 shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-2xl">{selectedResource.emoji}</span>
                   <div>
-                    <h3 className="text-base md:text-lg font-serif font-bold text-amber-50 flex items-center gap-2">
-                      {selectedResource.title}
-                      <span>{selectedResource.emoji}</span>
-                    </h3>
-                    <p className="text-[10px] text-amber-200/50 uppercase tracking-widest font-bold">Fiche Social Commission</p>
+                    <h3 className="text-base font-bold text-slate-900">{selectedResource.title}</h3>
+                    <p className="text-xs text-slate-500">{selectedResource.description}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedResource(null)}
-                  className="p-1.5 rounded-lg hover:bg-[#221c18] text-amber-200/40 hover:text-amber-200 transition-colors"
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Modal Content - Scrollable */}
-              <div className="p-6 overflow-y-auto space-y-6">
-                
-                {/* Section "Que faire ?" */}
-                <div className="space-y-3">
-                  <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                    <HelpCircle className="w-4 h-4 text-amber-500" />
-                    Mesures recommandées d'attention
-                  </h4>
-                  <ul className="space-y-3">
-                    {selectedResource.whatToDo.map((step, idx) => (
-                      <li key={idx} className="flex items-start gap-3 text-xs text-amber-100 leading-relaxed">
-                        <span className="flex items-center justify-center w-5.5 h-5.5 rounded-lg bg-[#221c18] text-amber-400 border border-amber-500/20 font-bold text-[10px] shrink-0 mt-0.5">
-                          {idx + 1}
-                        </span>
-                        <span>{step}</span>
+              {/* Body */}
+              <div className="p-5 overflow-y-auto space-y-4">
+                {/* Guidelines */}
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                  <span className="font-bold text-xs text-slate-700 block">Conseils pratiques :</span>
+                  <ul className="space-y-1 text-xs text-slate-600">
+                    {selectedResource.whatToDo.map((todo, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-rose-500 font-bold">•</span>
+                        <span>{todo}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                {/* Section "Quel message envoyer ?" */}
+                {/* Templates */}
                 <div className="space-y-3 pt-2">
-                  <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                    <MessageSquareCode className="w-4 h-4 text-amber-500" />
-                    Modèles de communication
-                  </h4>
-                  <p className="text-[10px] text-amber-200/40 italic">
-                    Note : Les balises seront automatiquement personnalisées s'ils sont copiés depuis l'action rapide d'un membre.
-                  </p>
+                  <span className="font-bold text-xs text-slate-800 uppercase tracking-wider block">
+                    Modèles de messages prêts à l'emploi :
+                  </span>
 
-                  <div className="space-y-4">
-                    {selectedResource.templates.map((tmpl, idx) => {
-                      const sampleText = formatMessageTemplate(
-                        tmpl.text,
-                        { firstName: '[Prénom]', lastName: '[Nom]', role: '[Sa Fonction]' },
-                        organization.name,
-                        organization.userRole
-                      );
-                      const copyId = `${selectedResource.id}-tmpl-${idx}`;
-                      const isCopied = copiedTextId === copyId;
-                      
-                      return (
-                        <div key={idx} className="border border-[#2d241f] rounded-xl p-4 bg-[#221c18] hover:bg-[#2c241f] transition-all">
-                          <div className="flex items-center justify-between mb-2.5">
-                            <span className="text-xs font-bold text-amber-300">
-                              {tmpl.title}
-                            </span>
-                            <button
-                              onClick={() => handleCopy(tmpl.text, copyId)}
-                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 active:scale-95 ${
-                                isCopied 
-                                  ? 'bg-amber-500 text-black' 
-                                  : 'bg-[#161311] hover:bg-[#2d241f] border border-[#3d2e24] text-amber-200'
-                              }`}
-                            >
-                              {isCopied ? (
-                                <>
-                                  <Check className="w-3.5 h-3.5" />
-                                  <span>Copié !</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="w-3.5 h-3.5" />
-                                  <span>Copier</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                          
-                          <p className="text-xs text-amber-100/90 whitespace-pre-wrap leading-relaxed select-all">
-                            {sampleText}
-                          </p>
+                  {selectedResource.templates.map((tpl, idx) => {
+                    const sampleMember = {
+                      firstName: '[Prénom]',
+                      lastName: '[Nom]',
+                      role: '[Pupitre]'
+                    };
+                    const sampleText = formatMessageTemplate(tpl.text, sampleMember, organization.name, organization.userRole);
+                    const templateId = `${selectedResource.id}-${idx}`;
+
+                    return (
+                      <div key={idx} className="bg-slate-50 border border-slate-200/80 rounded-xl p-4 space-y-2.5">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-xs text-slate-800">{tpl.title}</span>
+                          <button
+                            onClick={() => handleCopy(tpl.text, templateId)}
+                            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                              copiedTextId === templateId
+                                ? 'bg-emerald-600 text-white'
+                                : 'bg-white hover:bg-slate-100 border border-slate-200 text-slate-700'
+                            }`}
+                          >
+                            {copiedTextId === templateId ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                            <span>{copiedTextId === templateId ? 'Copié !' : 'Copier le texte'}</span>
+                          </button>
                         </div>
-                      );
-                    })}
-                  </div>
+                        <p className="text-xs text-slate-700 bg-white p-3 rounded-lg border border-slate-100 whitespace-pre-wrap select-all">
+                          {sampleText}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
+              </div>
 
-              </div>
-              
               {/* Footer */}
-              <div className="p-4 border-t border-[#2d241f] bg-[#1c1815] text-center shrink-0">
-                <p className="text-[10px] text-amber-200/40">
-                  Accompagner chaque vie, avec discrétion, dévouement et attention.
-                </p>
+              <div className="p-4 border-t border-slate-100 flex justify-end shrink-0">
+                <button
+                  onClick={() => setSelectedResource(null)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl"
+                >
+                  Fermer
+                </button>
               </div>
+
             </motion.div>
           </div>
         )}
       </AnimatePresence>
+
     </div>
   );
 }

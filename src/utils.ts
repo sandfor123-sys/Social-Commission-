@@ -96,9 +96,9 @@ export function formatMessageTemplate(
  * Generates and triggers download of the CSV template.
  */
 export function downloadCSVTemplate(): void {
-  const headers = ['Nom', 'Prénom', 'Sexe (M/F)', 'Date de Naissance (AAAA-MM-JJ)', 'Téléphone', 'Email (facultatif)', 'Fonction'];
+  const headers = ['Nom', 'Prénom', 'Sexe (M/F)', 'Date de Naissance (AAAA-MM-JJ)', 'Téléphone', 'Email (facultatif)', 'Pupitre ou Rôle'];
   const rowExample1 = ['Kouassi', 'Marie', 'F', '1995-06-30', '+2250707070707', 'marie.kouassi@email.com', 'Alto'];
-  const rowExample2 = ['Koné', 'Jean', 'M', '1990-11-15', '+2250101010101', '', 'Secrétaire Adjoint'];
+  const rowExample2 = ['Koné', 'Jean', 'M', '1990-11-15', '+2250101010101', '', 'Ténor'];
   
   const csvContent = [
     headers.join(';'),
@@ -111,7 +111,7 @@ export function downloadCSVTemplate(): void {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', 'social_commission_modele_membres.csv');
+  link.setAttribute('download', 'modele_membres_chorale.csv');
   link.style.visibility = 'hidden';
   document.body.appendChild(link);
   link.click();
@@ -298,7 +298,7 @@ export function exportMembersToCSV(members: Member[]): void {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', `membres_social_commission_${new Date().toISOString().split('T')[0]}.csv`);
+  link.setAttribute('download', `membres_chorale_${new Date().toISOString().split('T')[0]}.csv`);
   link.style.visibility = 'hidden';
   document.body.appendChild(link);
   link.click();
@@ -333,7 +333,7 @@ export function playWarmChime(): void {
       osc.stop(startTime + duration);
     };
 
-    // Warm elegant chord chime (C major 9 chord vibe, highly premium)
+    // Warm elegant chord chime (C major 9 chord vibe)
     const now = ctx.currentTime;
     playNote(261.63, now, 1.2, 0.15);        // C4 (Fundamental)
     playNote(329.63, now + 0.1, 1.0, 0.12);  // E4 (Third)
@@ -341,7 +341,7 @@ export function playWarmChime(): void {
     playNote(493.88, now + 0.3, 1.0, 0.08);  // B4 (Major 7th)
     playNote(523.25, now + 0.4, 1.4, 0.06);  // C5 (Octave)
   } catch (err) {
-    console.warn("L'API Web Audio a été bloquée par le navigateur ou n'est pas supportée", err);
+    console.warn("L'API Web Audio n'a pas pu être initialisée", err);
   }
 }
 
@@ -356,7 +356,7 @@ export async function requestDesktopNotificationPermission(): Promise<string> {
     const permission = await Notification.requestPermission();
     return permission;
   } catch (err) {
-    console.error("Erreur lors de la demande de permission de notification", err);
+    console.error("Erreur de permission de notification", err);
     return 'default';
   }
 }
@@ -371,11 +371,11 @@ export function triggerDesktopNotification(title: string, body: string): void {
     try {
       new Notification(title, {
         body,
-        tag: 'social-commission-anniversary',
-        icon: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' // Clean neutral cake icon
+        tag: 'chorale-anniversary',
+        icon: '/choir-logo.png'
       });
     } catch (err) {
-      console.warn("Impossible d'envoyer la notification de bureau standard", err);
+      console.warn("Notification non envoyée", err);
     }
   }
 }

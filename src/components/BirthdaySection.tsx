@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Member, Organization } from '../types';
 import { 
   isBirthdayToday, 
   getDaysUntilBirthday, 
   calculateAge, 
   formatPhoneNumber,
-  formatMessageTemplate,
-  requestDesktopNotificationPermission
+  formatMessageTemplate
 } from '../utils';
 import { 
   Cake, 
@@ -16,14 +15,11 @@ import {
   Copy, 
   Check, 
   ChevronRight, 
-  Bell, 
   Calendar, 
-  Smile, 
   Share2,
   CalendarDays,
   Sparkles,
-  ArrowRight,
-  Info
+  Music
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -35,18 +31,6 @@ interface BirthdaySectionProps {
 export default function BirthdaySection({ members, organization }: BirthdaySectionProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [activeActionsMemberId, setActiveActionsMemberId] = useState<string | null>(null);
-  const [notificationStatus, setNotificationStatus] = useState<string>('default');
-
-  useEffect(() => {
-    if ("Notification" in window) {
-      setNotificationStatus(Notification.permission);
-    }
-  }, []);
-
-  const handleRequestNotify = async () => {
-    const res = await requestDesktopNotificationPermission();
-    setNotificationStatus(res);
-  };
 
   // Filter members having birthday TODAY
   const todayBirthdays = members.filter(m => isBirthdayToday(m.birthDate));
@@ -60,9 +44,9 @@ export default function BirthdaySection({ members, organization }: BirthdaySecti
     }))
     .sort((a, b) => a.daysLeft - b.daysLeft);
 
-  // Template messages
-  const personalTemplate = "Bonjour {firstName}, en ce jour spécial, toute la communauté de {orgName} et moi-même te souhaitons un merveilleux anniversaire ! Merci pour ton engagement et ta présence en tant que {role}. Passe une excellente journée ! 🎂✨";
-  const groupTemplate = "🎉 C'est la fête aujourd'hui ! Nous célébrons l'anniversaire de notre cher(e) {firstName} {lastName} ({role}). En tant que {userRole}, je vous invite tous à vous joindre à moi pour lui souhaiter le meilleur. Joyeux anniversaire {firstName} ! 🥳🎂🎁";
+  // Templates
+  const personalTemplate = "Joyeux anniversaire {firstName} ! 🎉 Toute la chorale {orgName} te souhaite une excellente journée, une santé de fer et beaucoup de joie au pupitre {role}. Passe une très belle fête ! 🎂🎶";
+  const groupTemplate = "🎂 C'est l'anniversaire de notre cher(e) {firstName} {lastName} ({role}) aujourd'hui ! Joignons nos voix pour lui souhaiter une magnifique année et plein de bonheur ! 🥳🎶🎉";
 
   const getPersonalMessage = (m: Member) => {
     return formatMessageTemplate(personalTemplate, m, organization.name, organization.userRole);
@@ -95,48 +79,46 @@ export default function BirthdaySection({ members, organization }: BirthdaySecti
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       
-      {/* Top Welcome / Notification area */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-[#161311] border border-[#2d241f] p-6 rounded-2xl shadow-lg gap-5">
+      {/* Top Welcome Card */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white border border-slate-200/90 p-5 rounded-2xl shadow-xs gap-4">
         <div>
-          <h2 className="text-xl font-bold text-amber-50 tracking-tight flex items-center gap-2">
-            <span>Bonjour,</span>
-            <span className="text-amber-400 font-serif italic font-extrabold">{organization.userRole}</span>
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <span>Tableau des Anniversaires</span>
           </h2>
-          <p className="text-xs text-amber-200/60 mt-1">
-            Espace <strong className="font-semibold text-amber-100">{organization.name}</strong> • Suivi et célébration des anniversaires.
+          <p className="text-xs text-slate-500 mt-0.5">
+            {organization.name} • {members.length} choriste{members.length > 1 ? 's' : ''} enregistré{members.length > 1 ? 's' : ''}
           </p>
         </div>
 
         {todayBirthdays.length > 0 ? (
-          <div className="flex items-center gap-3 bg-amber-500/10 border border-amber-500/25 px-4 py-2.5 rounded-xl self-start md:self-center">
+          <div className="flex items-center gap-3 bg-rose-50 border border-rose-200 px-4 py-2 rounded-xl self-start sm:self-center">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
             </span>
             <div className="text-xs">
-              <span className="font-bold text-amber-200 block">Notifications Actives</span>
-              <span className="text-amber-200/70">{todayBirthdays.length} anniversaire{todayBirthdays.length > 1 ? 's' : ''} aujourd'hui !</span>
+              <span className="font-bold text-rose-800 block">{todayBirthdays.length} anniversaire{todayBirthdays.length > 1 ? 's' : ''} aujourd'hui !</span>
             </div>
           </div>
         ) : (
-          <div className="flex items-center gap-2.5 bg-[#221c18] border border-[#2d241f] px-4 py-2.5 rounded-xl text-amber-200/50 text-xs self-start md:self-center">
-            <CalendarDays className="w-4 h-4 text-amber-500/60 shrink-0" />
-            <span>Aucune célébration aujourd'hui.</span>
+          <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-500 text-xs self-start sm:self-center">
+            <CalendarDays className="w-4 h-4 text-slate-400 shrink-0" />
+            <span>Aucun anniversaire aujourd'hui</span>
           </div>
         )}
       </div>
 
-      {/* TODAY CELEBRATIONS SECTION */}
-      <div className="space-y-4">
-        <h3 className="text-xs font-bold text-amber-400/70 uppercase tracking-widest flex items-center gap-3">
-          <span>Célébrations du Jour</span>
-          <span className="h-px bg-gradient-to-r from-[#2d241f] to-transparent flex-1"></span>
+      {/* TODAY CELEBRATIONS */}
+      <div className="space-y-3">
+        <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+          <Cake className="w-4 h-4 text-rose-500" />
+          <span>Anniversaires du jour</span>
         </h3>
 
         {todayBirthdays.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {todayBirthdays.map((member) => {
               const age = calculateAge(member.birthDate);
               const personalMsg = getPersonalMessage(member);
@@ -146,122 +128,119 @@ export default function BirthdaySection({ members, organization }: BirthdaySecti
               return (
                 <motion.div
                   key={member.id}
-                  initial={{ opacity: 0, y: 15 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-[#161311] border-2 border-amber-500/40 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.04)] flex flex-col justify-between"
+                  className="bg-white border-2 border-rose-400/80 rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between"
                 >
-                  <div className="p-6 space-y-4">
+                  <div className="p-5 space-y-4">
                     
-                    {/* Member profile header card */}
+                    {/* Header */}
                     <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-14 h-14 rounded-full flex items-center justify-center font-extrabold text-sm text-[#0d0b0a] shrink-0 shadow-md border-2 ${
+                      <div className="flex items-center gap-3">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm text-white shrink-0 shadow-xs ${
                           member.gender === 'F' 
-                            ? 'bg-rose-400 border-rose-300' 
-                            : 'bg-amber-400 border-amber-300'
+                            ? 'bg-rose-500' 
+                            : 'bg-indigo-600'
                         }`}>
                           {member.firstName.charAt(0)}{member.lastName.charAt(0)}
                         </div>
                         <div>
-                          <h4 className="text-lg font-serif font-bold text-amber-50 flex items-center gap-2 leading-none">
+                          <h4 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
                             {member.firstName} {member.lastName}
-                            <span className="text-lg">🎂</span>
+                            <span>🎂</span>
                           </h4>
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-[#221c18] border border-amber-500/20 text-amber-400 mt-2">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-100 mt-1">
                             {member.role}
                           </span>
                         </div>
                       </div>
 
                       <div className="text-right">
-                        <span className="block text-[9px] uppercase font-bold text-amber-200/40 tracking-widest">Célèbre ses</span>
-                        <span className="text-2xl font-serif font-extrabold text-amber-400">{age} ans</span>
+                        <span className="text-2xl font-extrabold text-rose-600">{age} ans</span>
                       </div>
                     </div>
 
-                    {/* Member Info grid */}
-                    <div className="grid grid-cols-2 gap-4 bg-[#221c18] p-4 rounded-xl border border-[#2d241f] text-xs">
+                    {/* Contacts info */}
+                    <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200/70 text-xs">
                       <div>
-                        <span className="text-amber-200/40 block font-medium mb-0.5">Téléphone</span>
-                        <span className="font-mono font-bold text-amber-100">{member.phone}</span>
+                        <span className="text-slate-400 block font-medium text-[10px]">Téléphone</span>
+                        <span className="font-mono font-bold text-slate-800">{member.phone}</span>
                       </div>
                       <div>
-                        <span className="text-amber-200/40 block font-medium mb-0.5">E-mail</span>
-                        <span className="font-medium text-amber-100 truncate block">
+                        <span className="text-slate-400 block font-medium text-[10px]">E-mail</span>
+                        <span className="font-medium text-slate-800 truncate block">
                           {member.email || 'Non renseigné'}
                         </span>
                       </div>
                     </div>
 
-                    {/* Actions list */}
-                    <div className="space-y-3 pt-2">
-                      <p className="text-[10px] font-bold text-amber-200/40 uppercase tracking-widest">Actions de bienveillance</p>
-                      
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                        {/* Call directly */}
+                    {/* Quick actions */}
+                    <div className="space-y-2 pt-1">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {/* Call */}
                         <a
                           href={`tel:${member.phone}`}
-                          className="flex items-center justify-center gap-2 px-3 py-2.5 bg-[#2d241f] hover:bg-[#3d3129] border border-[#4d3d34] text-amber-100 font-bold rounded-xl text-xs transition-all active:scale-95"
+                          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 font-semibold rounded-xl text-xs transition-all active:scale-95"
                         >
-                          <Phone className="w-3.5 h-3.5 text-amber-400" />
+                          <Phone className="w-3.5 h-3.5 text-slate-600" />
                           <span>Appeler</span>
                         </a>
 
-                        {/* Open WhatsApp */}
+                        {/* WhatsApp */}
                         <button
                           onClick={() => handleWhatsApp(member)}
-                          className="flex items-center justify-center gap-2 px-3 py-2.5 bg-[#1e2e1a] hover:bg-[#283e23] border border-[#3b5934] text-emerald-300 font-bold rounded-xl text-xs transition-all active:scale-95"
+                          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs transition-all shadow-xs active:scale-95"
                         >
-                          <MessageCircle className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400/15" />
+                          <MessageCircle className="w-3.5 h-3.5" />
                           <span>WhatsApp</span>
                         </button>
 
-                        {/* Email if available */}
+                        {/* Email */}
                         <button
                           onClick={() => handleEmail(member)}
                           disabled={!member.email}
-                          className="flex items-center justify-center gap-2 px-3 py-2.5 bg-[#2d241f] hover:bg-[#3d3129] disabled:opacity-30 disabled:cursor-not-allowed border border-[#4d3d34] text-amber-100 font-bold rounded-xl text-xs transition-all active:scale-95"
+                          className="flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed border border-slate-200 text-slate-800 font-semibold rounded-xl text-xs transition-all active:scale-95"
                         >
-                          <Mail className="w-3.5 h-3.5 text-amber-400" />
+                          <Mail className="w-3.5 h-3.5 text-slate-600" />
                           <span>E-mail</span>
                         </button>
                       </div>
 
-                      {/* Copier templates */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                      {/* Copy buttons */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                         <button
                           onClick={() => handleCopy(personalMsg, `p-${member.id}`)}
-                          className={`flex items-center justify-center gap-2 px-3 py-2.5 border rounded-xl text-xs font-bold transition-all duration-150 active:scale-95 ${
+                          className={`flex items-center justify-center gap-1.5 px-3 py-2 border rounded-xl text-xs font-semibold transition-all active:scale-95 ${
                             copiedId === `p-${member.id}`
-                              ? 'bg-amber-500 border-amber-500 text-black shadow-md'
-                              : 'bg-[#1c1815] hover:bg-[#2c241f] border-[#382e27] text-amber-200'
+                              ? 'bg-rose-500 border-rose-500 text-white'
+                              : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
                           }`}
                         >
-                          {copiedId === `p-${member.id}` ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5 text-amber-400/70" />}
-                          <span>Message Direct</span>
+                          {copiedId === `p-${member.id}` ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
+                          <span>Copier Message Direct</span>
                         </button>
 
                         <button
                           onClick={() => handleCopy(groupMsg, `g-${member.id}`)}
-                          className={`flex items-center justify-center gap-2 px-3 py-2.5 border rounded-xl text-xs font-bold transition-all duration-150 active:scale-95 ${
+                          className={`flex items-center justify-center gap-1.5 px-3 py-2 border rounded-xl text-xs font-semibold transition-all active:scale-95 ${
                             copiedId === `g-${member.id}`
-                              ? 'bg-amber-500 border-amber-500 text-black shadow-md'
-                              : 'bg-[#1c1815] hover:bg-[#2c241f] border-[#382e27] text-amber-200'
+                              ? 'bg-rose-500 border-rose-500 text-white'
+                              : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
                           }`}
                         >
-                          {copiedId === `g-${member.id}` ? <Check className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5 text-amber-400/70" />}
-                          <span>Annonce Groupe</span>
+                          {copiedId === `g-${member.id}` ? <Check className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5 text-slate-500" />}
+                          <span>Copier Annonce Groupe</span>
                         </button>
                       </div>
                     </div>
 
-                    {/* Preview message section */}
-                    <div className="border-t border-[#2d241f] pt-3">
+                    {/* Preview toggle */}
+                    <div className="border-t border-slate-100 pt-2.5">
                       <button
                         onClick={() => setActiveActionsMemberId(isExpanded ? null : member.id)}
-                        className="w-full flex items-center justify-between text-[11px] font-bold text-amber-400 hover:text-amber-300 transition-colors"
+                        className="w-full flex items-center justify-between text-xs font-semibold text-rose-600 hover:text-rose-700"
                       >
-                        <span>{isExpanded ? 'Masquer' : 'Afficher/Modifier'} l'aperçu du texte</span>
+                        <span>{isExpanded ? 'Masquer le texte' : 'Afficher le texte complet'}</span>
                         <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} />
                       </button>
 
@@ -271,16 +250,15 @@ export default function BirthdaySection({ members, organization }: BirthdaySecti
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden space-y-3 pt-3 text-xs"
+                            className="overflow-hidden space-y-2 pt-2 text-xs"
                           >
-                            <div className="bg-[#1c1815] border border-[#2d241f] rounded-xl p-3.5">
-                              <span className="font-bold text-[9px] text-amber-400/50 uppercase tracking-wider block mb-1">Message personnel pré-rempli :</span>
-                              <p className="text-amber-100/90 whitespace-pre-wrap leading-relaxed select-all">{personalMsg}</p>
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                              <span className="font-bold text-[10px] text-slate-500 block mb-1">Message direct :</span>
+                              <p className="text-slate-800 whitespace-pre-wrap select-all">{personalMsg}</p>
                             </div>
-
-                            <div className="bg-[#1c1815] border border-[#2d241f] rounded-xl p-3.5">
-                              <span className="font-bold text-[9px] text-amber-400/50 uppercase tracking-wider block mb-1">Annonce groupe pré-remplie :</span>
-                              <p className="text-amber-100/90 whitespace-pre-wrap leading-relaxed select-all">{groupMsg}</p>
+                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                              <span className="font-bold text-[10px] text-slate-500 block mb-1">Annonce groupe :</span>
+                              <p className="text-slate-800 whitespace-pre-wrap select-all">{groupMsg}</p>
                             </div>
                           </motion.div>
                         )}
@@ -293,40 +271,29 @@ export default function BirthdaySection({ members, organization }: BirthdaySecti
             })}
           </div>
         ) : (
-          /* Premium Empty State with instructions since mock data is deleted */
-          <div className="bg-[#161311] border border-[#2d241f] p-10 rounded-2xl text-center shadow-lg max-w-2xl mx-auto space-y-4">
-            <div className="w-16 h-16 bg-[#221c18] border border-amber-500/25 rounded-full flex items-center justify-center mx-auto text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.06)]">
-              <Smile className="w-8 h-8" />
-            </div>
-            <div className="space-y-1">
-              <h4 className="text-base font-serif font-bold text-amber-50">Aucun anniversaire aujourd'hui</h4>
-              <p className="text-xs text-amber-200/50 max-w-md mx-auto leading-relaxed">
-                Votre base de données ne contient aucun anniversaire pour aujourd'hui. C'est l'occasion idéale d'enrichir votre liste ou d'importer vos membres !
-              </p>
-            </div>
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <div className="text-xs text-amber-400 font-semibold bg-[#221c18] border border-[#382e27] px-4 py-2.5 rounded-xl flex items-center gap-2">
-                <Info className="w-4 h-4 text-amber-500" />
-                <span>Rendez-vous dans l'onglet "Membres"</span>
-              </div>
-            </div>
+          <div className="bg-white border border-slate-200/90 p-8 rounded-2xl text-center shadow-xs max-w-xl mx-auto space-y-2">
+            <Cake className="w-10 h-10 text-slate-300 mx-auto" />
+            <h4 className="text-sm font-bold text-slate-800">Aucun anniversaire aujourd'hui</h4>
+            <p className="text-xs text-slate-500">
+              Consultez les dates à venir ci-dessous ou ajoutez des choristes dans l'onglet "Choristes & Pupitres".
+            </p>
           </div>
         )}
       </div>
 
-      {/* UPCOMING BIRTHDAYS TIMELINE */}
-      <div className="space-y-4">
-        <h3 className="text-xs font-bold text-amber-400/70 uppercase tracking-widest flex items-center gap-3">
+      {/* UPCOMING BIRTHDAYS (30 DAYS) */}
+      <div className="space-y-3">
+        <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-amber-500" />
           <span>Prochains Anniversaires (30 prochains jours)</span>
-          <span className="h-px bg-gradient-to-r from-[#2d241f] to-transparent flex-1"></span>
         </h3>
 
         {upcomingBirthdays.filter(item => item.daysLeft <= 30).length > 0 ? (
-          <div className="bg-[#161311] border border-[#2d241f] rounded-2xl divide-y divide-[#2d241f] shadow-lg overflow-hidden">
+          <div className="bg-white border border-slate-200/90 rounded-2xl divide-y divide-slate-100 shadow-xs overflow-hidden">
             {upcomingBirthdays
               .filter(item => item.daysLeft <= 30)
               .map(({ member, daysLeft }) => {
-                const age = calculateAge(member.birthDate) + 1; // Age they will turn
+                const age = calculateAge(member.birthDate) + 1;
                 const bDate = new Date(member.birthDate);
                 const dayMonthStr = bDate.toLocaleDateString('fr-FR', {
                   day: 'numeric',
@@ -334,33 +301,31 @@ export default function BirthdaySection({ members, organization }: BirthdaySecti
                 });
 
                 return (
-                  <div key={member.id} className="p-4 sm:p-5 flex items-center justify-between hover:bg-[#1c1815]/60 transition-colors">
+                  <div key={member.id} className="p-4 flex items-center justify-between hover:bg-slate-50/80 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs shrink-0 border ${
-                        member.gender === 'F' 
-                          ? 'bg-rose-950/30 text-rose-300 border-rose-900/40' 
-                          : 'bg-amber-950/30 text-amber-300 border-amber-900/40'
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0 ${
+                        member.gender === 'F' ? 'bg-rose-500' : 'bg-indigo-600'
                       }`}>
                         {member.firstName.charAt(0)}{member.lastName.charAt(0)}
                       </div>
                       
                       <div>
-                        <div className="font-semibold text-amber-50 text-sm">
+                        <div className="font-bold text-slate-900 text-sm">
                           {member.firstName} {member.lastName}
                         </div>
-                        <div className="flex flex-wrap items-center gap-2 mt-0.5 text-xs text-amber-200/50">
-                          <span className="font-medium text-amber-400">{member.role}</span>
+                        <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+                          <span className="font-semibold text-slate-700">{member.role}</span>
                           <span>•</span>
-                          <span>Fêtera ses <strong className="font-bold text-amber-200">{age} ans</strong></span>
+                          <span>Fêtera ses <strong className="font-bold text-slate-900">{age} ans</strong></span>
                         </div>
                       </div>
                     </div>
 
                     <div className="text-right">
-                      <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold bg-[#221c18] border border-[#382d26] text-amber-300">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 border border-amber-200 text-amber-800">
                         {dayMonthStr}
                       </span>
-                      <span className="block text-[10px] font-bold text-amber-200/40 mt-1 uppercase tracking-widest">
+                      <span className="block text-[10px] font-semibold text-slate-400 mt-0.5">
                         Dans {daysLeft} jour{daysLeft > 1 ? 's' : ''}
                       </span>
                     </div>
@@ -369,10 +334,8 @@ export default function BirthdaySection({ members, organization }: BirthdaySecti
               })}
           </div>
         ) : (
-          <div className="bg-[#161311] border border-[#2d241f] p-8 rounded-2xl text-center shadow-lg">
-            <Calendar className="w-8 h-8 text-amber-500/40 mx-auto mb-2" />
-            <p className="text-xs font-bold text-amber-200/60">Aucun anniversaire prévu dans les 30 prochains jours</p>
-            <p className="text-[10px] text-amber-200/30 mt-1">Vos fiches de membres ne contiennent pas d'anniversaires à venir pour ce mois.</p>
+          <div className="bg-white border border-slate-200/90 p-6 rounded-2xl text-center text-xs text-slate-500 shadow-xs">
+            Aucun anniversaire prévu dans les 30 prochains jours.
           </div>
         )}
       </div>
@@ -380,3 +343,4 @@ export default function BirthdaySection({ members, organization }: BirthdaySecti
     </div>
   );
 }
+
